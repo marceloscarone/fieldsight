@@ -1,5 +1,7 @@
 import json
 import os
+import re
+
 from datetime import datetime
 from tempfile import NamedTemporaryFile
 from time import strftime, strptime
@@ -311,9 +313,9 @@ def create_export(request, username, id_string, export_type, is_project=None, id
     else:
         fsxf = FieldSightXF.objects.get(pk=id)
         if fsxf.site:
-            query = {"fs_uuid": str(id)}
+            query = {"$or":[{"fs_uuid": str(id)},{"fs_uuid":id}]}
         else:
-            query = {"fs_project_uuid": str(id), "fs_site": str(site_id)}
+             query = {"$or":[{"fs_project_uuid": str(id), "fs_site": str(site_id)},{"fs_project_uuid":id, "fs_site":site_id}]}
     force_xlsx = True
     if version not in ["0", 0]:
         query["__version__"] = version
@@ -769,7 +771,13 @@ def attachment_url(request, size='medium'):
     # this assumes duplicates are the same file
     result = Attachment.objects.filter(media_file=media_file)[0:1]
     if result.count() == 0:
-        return HttpResponseNotFound(_(u'Attachment not found'))
+        pattern = re.compile('(.*)-(.*)\.(.*))')
+        m = pattern.search(media_file)
+        if m:
+            media_file = media_file.replace("-"+m.group(2), "")
+            result = Attachment.objects.filter(media_file=media_file)[0:1]
+        else:
+            return HttpResponseNotFound(_(u'Attachment not found'))
     attachment = result[0]
     if not attachment.mimetype.startswith('image'):
         return redirect(attachment.media_file.url)

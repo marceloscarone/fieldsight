@@ -289,7 +289,7 @@ def create_instance(fsxfid, xml_file, media_files,
                 else:
                     fs_poj_id = ""
                 pi, created = FieldSightParsedInstance.get_or_create(existing_instance,
-                                                                     update_data={'fs_uuid': str(fsxfid), 'fs_status': 0,
+                                                                     update_data={'fs_uuid': fsxfid, 'fs_status': 0,
                                                                                   'fs_site': site,
                                                                                   'fs_project': proj_id,
                                                                                   'fs_project_uuid': fs_poj_id})
