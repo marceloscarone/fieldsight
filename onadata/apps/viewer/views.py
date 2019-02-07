@@ -771,9 +771,11 @@ def attachment_url(request, size='medium'):
     # this assumes duplicates are the same file
     result = Attachment.objects.filter(media_file=media_file)[0:1]
     if result.count() == 0:
-        pattern = re.compile('(.*)-(.*)\.(.*))')
+        pattern = re.compile('(.*)-(\d+)_(\d+)_(\d+)\.(.*))')
         m = pattern.search(media_file)
         if m:
+            pattern = re.compile('(.*)-(.*)\.(.*)')
+            m = pattern.search(media_file)
             media_file = media_file.replace("-"+m.group(2), "")
             result = Attachment.objects.filter(media_file=media_file)[0:1]
         else:
