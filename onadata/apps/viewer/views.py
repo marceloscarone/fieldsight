@@ -426,9 +426,9 @@ def export_list(request, username, id_string, export_type, is_project=0, id=0, s
         else:
             fsxf = FieldSightXF.objects.get(pk=id)
             if fsxf.site:
-                query = {"$or":[{"fs_uuid": str(id)},{"fs_uuid":id}]}
+                query = {"fs_uuid":id}
             else:
-                query = {"$or":[{"fs_project_uuid": str(id), "fs_site": str(site_id)},{"fs_project_uuid":id, "fs_site":site_id}]}
+                query = {"fs_project_uuid": str(id), "fs_site": site_id}
         force_xlsx = True
         if version not in ["0", 0]:
             query["__version__"] = version
