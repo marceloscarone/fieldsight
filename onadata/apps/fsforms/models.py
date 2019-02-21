@@ -441,7 +441,13 @@ class FInstance(models.Model):
 
     @property
     def get_version(self):
-        return self.instance.json['__version__']
+        xml = self.instance.xml
+        p = re.compile('version="(.*)">')
+        m = p.search(xml)
+        if m:
+            return m.group(1)
+        else:
+            return None
 
     def save(self, *args, **kwargs):
         self.version = self.get_version
