@@ -441,13 +441,11 @@ class FInstance(models.Model):
 
     @property
     def get_version(self):
-        xml = self.instance.xml
-        p = re.compile('version="(.*)">')
-        m = p.search(xml)
-        if m:
-            return m.group(1)
+        parsed_instance = self.instance.parsed_instance.to_dict_for_mongo()
+        if parsed_instance['_version_']:
+            return parsed_instance['_version_']
         else:
-            return None
+            return parsed_instance['__version__']
 
     def save(self, *args, **kwargs):
         self.version = self.get_version
