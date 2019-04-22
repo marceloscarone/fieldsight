@@ -10,15 +10,40 @@ DEFAULT_LIMIT = 30000
 
 def get_images_for_sites_count(site_id):
     try:
-        return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site":{'$in' : [str(site_id), int(site_id)]}}}, {"$unwind":"$_attachments"},{"$match":{"_attachments.mimetype" : "image/jpeg"}}, { "$group":{"_id":"null", "count":{"$sum": 1} }}])
+        query =  settings.MONGO_DB.instances.aggregate([
+            {"$match":{"fs_site":{'$in' : [str(site_id), int(site_id)]}}},
+            {"$unwind":"$_attachments"},
+            {"$match":{"_attachments.mimetype" : "image/jpeg"}},
+            { "$group":{"_id":"null", "count":{"$sum": 1} }}
+        ])
+        return list(query)
+
     except:
-        return {'result':[]}
+        return []
 
 def get_images_for_site(site_id):
-    return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {'$in' : [str(site_id), int(site_id)]}}}, {"$unwind":"$_attachments"},{"$match":{"_attachments.mimetype" : "image/jpeg"}}, { "$sort" : { "_id": -1 }}, { "$limit": 6 }])
+    try:
+        query =  settings.MONGO_DB.instances.aggregate([
+        {"$match":{"fs_site": {'$in' : [str(site_id), int(site_id)]}}},
+        {"$unwind":"$_attachments"},
+        {"$match":{"_attachments.mimetype" : "image/jpeg"}},
+        { "$sort" : { "_id": -1 }}, { "$limit": 6 }
+        ])
+        return list(query)
+    except:
+        return []
+
 
 def get_images_for_site_all(site_id):
-    return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {'$in' : [str(site_id), int(site_id)]}}}, {"$unwind":"$_attachments"},{"$match":{"_attachments.mimetype" : "image/jpeg"}}, { "$sort" : { "_id": -1 }}])
+    try:
+        query =  settings.MONGO_DB.instances.aggregate([
+        {"$match":{"fs_site": {'$in' : [str(site_id), int(site_id)]}}},
+        {"$unwind":"$_attachments"},
+        {"$match":{"_attachments.mimetype" : "image/jpeg"}},
+        { "$sort" : { "_id": -1 }}])
+        return list(query)
+    except:
+        return []
 
 def get_site_responses_coords(site_id):
     return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {'$in' : [str(site_id), int(site_id)]}, "_geolocation":{"$not":{ "$elemMatch": { "$eq": None }}}}}, {"$project" : {"_id":0, "type": {"$literal": "Feature"}, "geometry":{ "type": {"$literal": "Point"}, "coordinates": "$_geolocation" }, "properties": {"id":"$_id", "fs_uuid":"$fs_uuid", "submitted_by":"$_submitted_by"}}}])

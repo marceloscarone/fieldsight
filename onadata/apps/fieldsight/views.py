@@ -353,12 +353,14 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
         myanswers = mylist
 
         result = get_images_for_sites_count(obj.id)
-        
-        countlist = list(result["result"])
-        if countlist:
-            total_count = countlist[0]['count']
-        else:
-            total_count = 0
+        total_count = 0
+        if result:
+            [{u'_id': u'null', u'count': 230}]
+            try:
+                total_count = result[0]['count']
+            except:
+                pass
+
         outstanding, flagged, approved, rejected = obj.get_site_submission()
         response = obj.get_site_submission_count()
         dashboard_data = {
@@ -3207,7 +3209,7 @@ class GenerateCustomReport(ReadonlySiteLevelRoleMixin, View):
 class RecentResponseImages(ReadonlySiteLevelRoleMixin, View):
     def get(self, request, pk, **kwargs):
         recent_resp_imgs = get_images_for_site(pk)
-        content={'images':list(recent_resp_imgs["result"])}
+        content={'images':recent_resp_imgs}
         return JsonResponse(content, status=200)
 
 class SiteResponseCoordinates(ReadonlySiteLevelRoleMixin, View):
@@ -3367,10 +3369,14 @@ class DefineProjectSiteCriteria(ProjectRoleMixin, TemplateView):
         project.save()
         return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
 
+
 class AllResponseImages(ReadonlySiteLevelRoleMixin, View):
     def get(self, request, pk, **kwargs):
         all_imgs = get_images_for_site_all(pk)
-        return render(request, 'fieldsight/gallery.html', {'is_donor_only': kwargs.get('is_donor_only', False), 'all_imgs' : json.dumps(list(all_imgs["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8')})
+        return render(request,
+                      'fieldsight/gallery.html',
+                      {'is_donor_only': kwargs.get('is_donor_only', False),
+                       'all_imgs' : json.dumps(all_imgs, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8')})
 
 
 
