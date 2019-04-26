@@ -29,7 +29,7 @@ from onadata.apps.fieldsight.mixins import USURPERS
 from onadata.apps.fieldsight.models import BluePrints, Region, Site
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.userrole.serializers.UserRoleSerializer import MySiteRolesSerializer, MyProjectRolesSerializer, \
-    MySiteOnlyRolesSerializer
+    MySiteOnlyRolesSerializer, MySiteRolesSerializerFilteredMA
 from onadata.apps.users.models import User, UserProfile
 from onadata.apps.users.serializers import UserSerializer, UserSerializerProfile, SearchableUserSerializer
 
@@ -277,8 +277,9 @@ class MySitesViewset(viewsets.ReadOnlyModelViewSet):
         return {'request': self.request, 'blue_prints': blue_prints}
 
 
+
 class MySitesViewsetV2(viewsets.ReadOnlyModelViewSet):
-    serializer_class = MySiteRolesSerializer
+    serializer_class = MySiteRolesSerializerFilteredMA
     permission_classes = (IsAuthenticated,)
     renderer_classes = [JSONRenderer]
     queryset = UserRole.objects.filter(ended_at=None, group__name__in=["Site Supervisor", "Region Supervisor"])
