@@ -235,7 +235,7 @@ class SearchableUserListViewSet(viewsets.ModelViewSet):
 
 
 class MySitesViewset(viewsets.ReadOnlyModelViewSet):
-    serializer_class = MySiteRolesSerializer
+    serializer_class = MySiteRolesSerializerFilteredMA
     permission_classes = (IsAuthenticated,)
     queryset = UserRole.objects.filter(ended_at=None, group__name__in=["Site Supervisor", "Region Supervisor"])
     pagination_class = MySitesResultsSetPagination
@@ -277,7 +277,6 @@ class MySitesViewset(viewsets.ReadOnlyModelViewSet):
         return {'request': self.request, 'blue_prints': blue_prints}
 
 
-
 class MySitesViewsetV2(viewsets.ReadOnlyModelViewSet):
     serializer_class = MySiteRolesSerializerFilteredMA
     permission_classes = (IsAuthenticated,)
@@ -285,7 +284,7 @@ class MySitesViewsetV2(viewsets.ReadOnlyModelViewSet):
     queryset = UserRole.objects.filter(ended_at=None, group__name__in=["Site Supervisor", "Region Supervisor"])
     pagination_class = ExtremeLargeJsonResultsSetPagination
 
-    @method_decorator(cache_page(7 * 24 * 60 * 60 ))
+    @method_decorator(cache_page(60 * 60 * 10 ))
     @method_decorator(vary_on_cookie)
     def list(self, request, *args, **kwargs):
         return super(MySitesViewsetV2, self).list(request, *args, **kwargs)
