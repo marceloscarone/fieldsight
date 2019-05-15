@@ -32,7 +32,7 @@ def run_enketo(project_form, instance):
     firefox_capabilities = DesiredCapabilities.FIREFOX
     firefox_capabilities['marionette'] = True
     # firefox_capabilities['binary'] = '/home/awemulya/Downloads/geckodriver-v0.24.0-linux32'
-    driver = webdriver.Firefox(capabilities=firefox_capabilities, executable_path='/home/awemulya/Downloads/geckodriver-v0.24.0-linux32/geckodriver')
+    driver = webdriver.Firefox(capabilities=firefox_capabilities, executable_path='/geckodriver')
     driver.get(BASE_URL)
     driver.find_element_by_name('username').send_keys(USER_NAME)
     driver.find_element_by_name('password').send_keys(USER_PASSWORD + Keys.RETURN)
