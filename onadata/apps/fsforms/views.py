@@ -2416,6 +2416,8 @@ def download_xml_version(request, pk):
         if XformHistory.objects.filter(xform=xf, version=submission_version).exists():
             xf_history = XformHistory.objects.get(xform=xf, version=submission_version)
             response.content = xf_history.xml
+        else:
+            response.content = xml
     return response
 
 @api_view(['GET'])
