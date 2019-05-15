@@ -48,8 +48,7 @@ def run_enketo(project_form, instance):
         time.sleep(3)
 
         try:
-            submit_button = driver.find_elements_by_xpath('//*[@id="submit-form"]')[0]
-            submit_button.click()
+            driver.execute_script("document.querySelectorAll('button#submit-form')[0].click()")
             time.sleep(2)
             print(ID_SUBMISSION)
         except TimeoutException:
