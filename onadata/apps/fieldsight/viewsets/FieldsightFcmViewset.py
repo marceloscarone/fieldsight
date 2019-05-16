@@ -16,6 +16,7 @@ class FcmDeviceViewSet(viewsets.ModelViewSet):
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def create(self, request, *args, **kwargs):
+        print(request.data)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=False)
         self.perform_create(serializer)
@@ -30,7 +31,7 @@ class FcmDeviceViewSet(viewsets.ModelViewSet):
             device = Device(dev_id=serializer.data["dev_id"])
             device.is_active = True
 
-            device.reg_id = serializer.data["reg_id"]
+        device.reg_id = serializer.data["reg_id"]
         user = User.objects.filter(email__iexact=serializer.data["name"])
         if user:
             device.name = user[0].email
@@ -39,7 +40,8 @@ class FcmDeviceViewSet(viewsets.ModelViewSet):
             if user:
                 device.name = user[0].email
             else:
-                return response.Response(status=status.HTTP_404_NOT_FOUND)    
+                return response.Response(status=status.HTTP_404_NOT_FOUND)
+        print(device.__dict__)
         device.save()
 
     def destroy(self, request, *args, **kwargs):
